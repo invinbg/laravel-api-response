@@ -1,0 +1,30 @@
+{
+    "name": "invinbg/laravel-api-response",
+    "description": "Elegant API returns.",
+    "authors": [
+        {
+            "name": "invinbg",
+            "email": "253618519@qq.com"
+        }
+    ],
+    "keywords": ["laravel", "API", "JSON", "response"],
+    "homepage": "https://github.com/invinbg/laravel-api-response",
+    "license": "MIT",
+    "require": {
+        "php": "^7.1.3",
+        "illuminate/support": "~5.1",
+        "themsaid/laravel-model-transformers": "^1.1"
+    },
+    "autoload": {
+      "psr-4": {
+        "InviNBG\\": "src"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "InviNBG\\ApiResponseServiceProvider"
+        ]
+      }
+    }
+}
