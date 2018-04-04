@@ -82,14 +82,18 @@ class ApiResponse
      */
     public function transformers($transformers)
     {
-        $data = $this->data;
-        if ($this->data instanceof AbstractPaginator) {
-            $data = $data->getCollection();
+        try {
+            if (class_exists($transformers)) {
+                if ($this->data instanceof AbstractPaginator) {
+                    $this->data->setCollection(collect(call_user_func([$transformers, 'transform'], $this->data->getCollection())));
+                } elseif ($this->data instanceof Model || $this->data instanceof Collection) {
+                    $this->data = call_user_func([$transformers, 'transform'], $this->data);
+                }
+            }
+        } catch(\Exception $e) {
+            throw new ApiReponseException($e->getMessage());
         }
 
-        if (class_exists($transformers) && ( $data instanceof Model || $data instanceof Collection)) {
-            $this->data = call_user_func([$transformers, 'transform'], $data);
-        }
         return $this;
     }
 
