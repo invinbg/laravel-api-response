@@ -2,6 +2,8 @@
 namespace InviNBG;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 
 class ApiResponse
@@ -80,8 +82,13 @@ class ApiResponse
      */
     public function transformers($transformers)
     {
-        if (class_exists($transformers) && $this->data instanceof Model) {
-            $this->data = call_user_func([$transformers, 'transform'], $this->data);
+        $data = $this->data;
+        if ($this->data instanceof AbstractPaginator) {
+            $data = $data->getCollection();
+        }
+
+        if (class_exists($transformers) && ( $data instanceof Model || $data instanceof Collection)) {
+            $this->data = call_user_func([$transformers, 'transform'], $data);
         }
         return $this;
     }
