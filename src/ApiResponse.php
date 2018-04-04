@@ -1,5 +1,5 @@
 <?php
-namespace InviNBG;
+namespace InviNBG\ApiReponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;

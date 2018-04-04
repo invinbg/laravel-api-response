@@ -1,5 +1,5 @@
 <?php
-namespace InviNBG;
+namespace InviNBG\ApiReponse;
 
 use Exception;
 
