@@ -1,6 +1,6 @@
 <?php
 
-namespace InviNBG\ApiReponse;
+namespace InviNBG\ApiResponse;
 
 use Illuminate\Support\ServiceProvider;
 

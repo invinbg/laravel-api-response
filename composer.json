@@ -17,13 +17,13 @@
     },
     "autoload": {
       "psr-4": {
-        "InviNBG\\ApiReponse\\": "src"
+        "InviNBG\\ApiResponse\\": "src"
       }
     },
     "extra": {
       "laravel": {
         "providers": [
-          "InviNBG\\ApiReponse\\ApiResponseServiceProvider"
+          "InviNBG\\ApiResponse\\ApiResponseServiceProvider"
         ]
       }
     }
