@@ -1,6 +1,7 @@
 <?php
 namespace InviNBG;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 
 class ApiResponse
@@ -10,6 +11,30 @@ class ApiResponse
      */
     protected $statusCode = FoundationResponse::HTTP_OK;
     protected $data = [];
+
+    protected $response;
+
+    public function __construct(Response $response)
+    {
+        $this->response = $response;
+    }
+
+    public static function __callStatic($method, $parameters)
+    {
+        if ($method === 'response') {
+            $self = new self(new Response());
+            return $self->response(...$parameters);
+        }
+
+        throw new ApiReponseException(sprintf(
+            'Method %s::%s does not exist.', static::class, $method
+        ));
+    }
+
+    protected function response()
+    {
+        return $this;
+    }
 
     /**
      * @return mixed
@@ -68,14 +93,14 @@ class ApiResponse
      * @param array $data
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function response($message = '',$code = '',array $data = []){
+    public function send($message = '',$code = '',array $data = []){
         if (empty($message)){
             $message = ($code ?: $this->statusCode) === 200 ? '请求成功': '请求失败';
         }
-        return response([
+        return $this->response->setStatusCode($code ?: $this->statusCode)->setContent([
             'code'=>$code ?: $this->statusCode,
             'data'=> $data ?: $this->data,
             'message'=>$message,
-        ],$this->statusCode);
+        ])->send();
     }
 }
