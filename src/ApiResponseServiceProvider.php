@@ -13,6 +13,7 @@ class ApiResponseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->commands(MakeCriteriaCommand::class);
     }
     /**
      * Register any package services.
