@@ -11,7 +11,7 @@ class ApiResponse
     /**
      * @var int
      */
-    protected $statusCode = FoundationResponse::HTTP_OK;
+    protected $code = 0;
     protected $data = [];
 
     protected $response;
@@ -43,17 +43,17 @@ class ApiResponse
      */
     public function getCode()
     {
-        return $this->statusCode;
+        return $this->code;
     }
 
     /**
-     * @param $statusCode
+     * @param $code
      * @return $this
      */
-    public function withCode($statusCode)
+    public function withCode($code)
     {
 
-        $this->statusCode = $statusCode;
+        $this->code = $code;
         return $this;
     }
 
@@ -61,7 +61,8 @@ class ApiResponse
      * 获取Response的数据
      * @return array
      */
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -70,7 +71,8 @@ class ApiResponse
      * @param $data
      * @return $this
      */
-    public function withData($data){
+    public function withData($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -98,20 +100,39 @@ class ApiResponse
     }
 
     /**
+     * 成功返回
+     * @param string $message
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
+     */
+    public function success($message = '操作成功')
+    {
+        return $this->send($message, $this->code, $this->data, true);
+    }
+
+    /**
+     * 失败返回
+     * @param string $message
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
+     */
+    public function error($message = '操作失败')
+    {
+        return $this->send($message, $this->code, $this->data, false);
+    }
+
+    /**
      * 返回
      * @param string $message
      * @param string $code
      * @param array $data
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function send($message = '',$code = '',array $data = []){
-        if (empty($message)){
-            $message = ($code ?: $this->statusCode) === 200 ? '请求成功': '请求失败';
-        }
-        return $this->response->setStatusCode($code ?: $this->statusCode)->setContent([
-            'code'=>$code ?: $this->statusCode,
-            'data'=> $data ?: $this->data,
-            'message'=>$message,
+    public function send($message = '',$code = null,array $data = [], bool $success = true)
+    {
+        return $this->response->setContent([
+            'succ' => $success,
+            'code' => $code ?? $this->code,
+            'data' => $data ?: $this->data,
+            'msg' => $message,
         ])->send();
     }
 }
