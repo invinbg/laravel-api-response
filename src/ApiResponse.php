@@ -126,7 +126,7 @@ class ApiResponse
      * @param array $data
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function send($message = '',$code = null,array $data = [], bool $success = true)
+    public function send($message = '', $code = null, $data = [], bool $success = true)
     {
         return $this->response->setContent([
             'succ' => $success,
