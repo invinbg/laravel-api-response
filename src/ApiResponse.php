@@ -1,9 +1,10 @@
 <?php
 namespace InviNBG\ApiResponse;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 
 class ApiResponse
@@ -11,14 +12,19 @@ class ApiResponse
     /**
      * @var int
      */
-    protected $code = 0;
-    protected $data = [];
+    protected $code = Response::HTTP_OK;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $data;
 
     protected $response;
 
     public function __construct(Response $response)
     {
         $this->response = $response;
+        $this->data = new Collection();
     }
 
     public static function __callStatic($method, $parameters)
@@ -71,29 +77,21 @@ class ApiResponse
      * @param $data
      * @return $this
      */
-    public function withData($data)
+    public function withData($data, $override = false)
     {
-        $this->data = $data;
-        return $this;
-    }
-
-    /**
-     * 自定义字段映射
-     * @param $transformers
-     * @return $this
-     */
-    public function transformers($transformers)
-    {
-        try {
-            if (class_exists($transformers)) {
-                if ($this->data instanceof AbstractPaginator) {
-                    $this->data->setCollection(collect(call_user_func([$transformers, 'transform'], $this->data->getCollection())));
-                } elseif ($this->data instanceof Model || $this->data instanceof Collection) {
-                    $this->data = call_user_func([$transformers, 'transform'], $this->data);
+        if ($data instanceof Arrayable) {
+            $data = $data->toArray();
+        }
+        foreach ((array)$data as $key=>$value) {
+            if (is_numeric($key)) {
+                if ($this->data->has($key) && $override) {
+                    $this->data->push($value);
+                } else {
+                    $this->data->put($key, $value);
                 }
+            } else {
+                $this->data->put($key, $value);
             }
-        } catch(\Exception $e) {
-            throw new ApiReponseException($e->getMessage());
         }
 
         return $this;
