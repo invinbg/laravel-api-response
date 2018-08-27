@@ -126,10 +126,13 @@ class ApiResponse
      */
     public function send($message = '', $code = null, $data = [], bool $success = true)
     {
+        $data && $this->withData($data);
+        $code && $this->withCode($code);
+
         return $this->response->setContent([
             'succ' => $success,
-            'code' => $code ?? $this->code,
-            'data' => $data ?: $this->data,
+            'code' => $this->code,
+            'data' => $this->data->isEmpty() ? null : $this->data,
             'msg' => $message,
         ])->send();
     }
