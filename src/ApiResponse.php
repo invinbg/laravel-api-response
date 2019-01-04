@@ -31,12 +31,21 @@ class ApiResponse
     {
         if ($method === 'response') {
             $self = new self(new Response());
-            return $self->response(...$parameters);
+            return $self->getInstance(...$parameters);
         }
 
         throw new ApiReponseException(sprintf(
             'Method %s::%s does not exist.', static::class, $method
         ));
+    }
+
+    /**
+     * 获取实例
+     * @return $this
+     */
+    protected function getInstance()
+    {
+        return $this;
     }
 
     protected function response()
@@ -102,9 +111,9 @@ class ApiResponse
      * @param string $message
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function success($message = '操作成功')
+    public function success($message = '请求成功')
     {
-        return $this->send($message, $this->code, $this->data, true);
+        return $this->send($message, Response::HTTP_OK);
     }
 
     /**
@@ -112,9 +121,9 @@ class ApiResponse
      * @param string $message
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function error($message = '操作失败')
+    public function error($message = '请求失败')
     {
-        return $this->send($message, $this->code, $this->data, false);
+        return $this->send($message, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -124,16 +133,15 @@ class ApiResponse
      * @param array $data
      * @return \Illuminate\Contracts\Routing\ResponseFactory|FoundationResponse
      */
-    public function send($message = '', $code = null, $data = [], bool $success = true)
+    public function send($message = '', $code = null, $data = [])
     {
         $data && $this->withData($data);
         $code && $this->withCode($code);
 
         return $this->response->setContent([
-            'succ' => $success,
             'code' => $this->code,
             'data' => $this->data->isEmpty() ? null : $this->data,
-            'msg' => $message,
+            'message' => $message,
         ])->send();
     }
 }
