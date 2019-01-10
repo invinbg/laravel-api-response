@@ -12,7 +12,7 @@ class ApiResponse
     /**
      * @var int
      */
-    protected $code = Response::HTTP_OK;
+    protected $code;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -29,7 +29,7 @@ class ApiResponse
 
     public static function __callStatic($method, $parameters)
     {
-        if ($method === 'response') {
+        if ($method === 'response' || $method === 'getInstance') {
             $self = new self(new Response());
             return $self->getInstance(...$parameters);
         }
@@ -113,7 +113,7 @@ class ApiResponse
      */
     public function success($message = '请求成功')
     {
-        return $this->send($message, Response::HTTP_OK);
+        return $this->send($message, $this->code ?? Response::HTTP_OK);
     }
 
     /**
@@ -123,7 +123,7 @@ class ApiResponse
      */
     public function error($message = '请求失败')
     {
-        return $this->send($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+        return $this->send($message, $this->code ?? Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
