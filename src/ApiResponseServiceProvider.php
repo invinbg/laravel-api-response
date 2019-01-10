@@ -3,6 +3,7 @@
 namespace InviNBG\ApiResponse;
 
 use Illuminate\Support\ServiceProvider;
+use InviNBG\ApiResponse\ApiResponse as Response;
 
 class ApiResponseServiceProvider extends ServiceProvider
 {
@@ -22,5 +23,8 @@ class ApiResponseServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton('apiResponse', function ($laravelApp) {
+            return new Response(new \Illuminate\Http\Response());
+        });
     }
 }
