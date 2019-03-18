@@ -21,10 +21,13 @@ class ApiResponse
 
     protected $response;
 
-    public function __construct(Response $response)
+    protected $setStatusCode;
+
+    public function __construct(Response $response, bool $setStatusCode = true)
     {
         $this->response = $response;
         $this->data = new Collection();
+        $this->setStatusCode = $setStatusCode;
     }
 
     public static function __callStatic($method, $parameters)
@@ -140,8 +143,8 @@ class ApiResponse
 
         return $this->response->setContent([
             'code' => $this->code,
-            'data' => $this->data->isEmpty() ? null : $this->data,
+            'data' => $this->data,
             'message' => $message,
-        ])->send();
+        ])->setStatusCode($this->setStatusCode ? $this->code : Response::HTTP_OK)->send();
     }
 }
