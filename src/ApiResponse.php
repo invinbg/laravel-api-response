@@ -145,6 +145,6 @@ class ApiResponse
             'code' => $this->code,
             'data' => $this->data,
             'message' => $message,
-        ])->setStatusCode($this->setStatusCode ? $this->code : Response::HTTP_OK)->send();
+        ])->setStatusCode($this->setStatusCode ? $this->code : Response::HTTP_OK);
     }
 }
