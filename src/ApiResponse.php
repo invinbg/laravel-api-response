@@ -1,7 +1,6 @@
 <?php
 namespace InviNBG\ApiResponse;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Collection;
